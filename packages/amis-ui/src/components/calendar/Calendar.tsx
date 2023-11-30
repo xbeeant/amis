@@ -6,7 +6,7 @@ import CustomCalendarContainer from './CalendarContainer';
 import cx from 'classnames';
 import moment from 'moment';
 import {
-  convertArrayValueToMoment,
+  convertArrayValueToDayjs,
   themeable,
   ThemeProps,
   utils
@@ -674,7 +674,7 @@ class BaseDatePicker extends React.Component<
       this.state.viewDate ||
       moment()
     ).clone();
-    let date = convertArrayValueToMoment(value, types, currentDate);
+    let date = convertArrayValueToDayjs(value, types, currentDate);
 
     if (types?.[1] === 'quarter') {
       date = date.startOf('quarter').date(currentDate.date());

@@ -1,5 +1,5 @@
 import {extendsFilters, FilterContext, filters} from 'amis-formula';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {makeSorter} from './makeSorter';
 import transform from 'lodash/transform';
 import groupBy from 'lodash/groupBy';
@@ -13,6 +13,10 @@ import {formatDuration} from './formatDuration';
 import {prettyBytes} from './prettyBytes';
 import {stripNumber} from './stripNumber';
 import {filterDate} from './date';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 function conditionalFilter(
   input: any,
@@ -117,11 +121,11 @@ extendsFilters({
   raw: input => input,
   now: () => new Date(),
   toDate: (input: any, inputFormat = '') => {
-    const date = moment(input, inputFormat);
+    const date = dayjs(input, inputFormat);
     return date.isValid() ? date.toDate() : undefined;
   },
   fromNow: (input: any, inputFormat = '') =>
-    moment(input, inputFormat).fromNow(),
+    dayjs(input, inputFormat).fromNow(),
   dateModify: (
     input: any,
     modifier: 'add' | 'subtract' | 'endOf' | 'startOf' = 'add',
@@ -130,23 +134,21 @@ extendsFilters({
   ) => {
     if (!(input instanceof Date)) {
       // input 有可能是上下文获取的 日期字符串
-      input = moment(input).isValid()
-        ? moment(input).toDate()
-        : moment().toDate();
+      input = dayjs(input).isValid() ? dayjs(input).toDate() : dayjs().toDate();
     }
 
     if (modifier === 'endOf' || modifier === 'startOf') {
-      return moment(input)
+      return dayjs(input)
         [modifier === 'endOf' ? 'endOf' : 'startOf'](amount || 'day')
         .toDate();
     }
 
-    return moment(input)
+    return dayjs(input)
       [modifier === 'add' ? 'add' : 'subtract'](parseInt(amount, 10) || 0, unit)
       .toDate();
   },
   date: (input, format = 'LLL', inputFormat = 'X') =>
-    moment(input, inputFormat).format(format),
+    dayjs(input, inputFormat).format(format),
   number: input => {
     let parts = String(input).split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');

@@ -1,6 +1,12 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {createObject} from './object';
 import {tokenize} from './tokenize';
+
+import utc from 'dayjs/plugin/utc';
+import duration, {Duration} from 'dayjs/plugin/duration';
+
+dayjs.extend(utc);
+dayjs.extend(duration);
 
 const timeUnitMap: {
   [propName: string]: string;
@@ -24,9 +30,9 @@ export const filterDate = (
   data: object = {},
   format = 'X',
   utc: boolean = false
-): moment.Moment => {
+): dayjs.Dayjs => {
   let m,
-    mm = utc ? moment.utc : moment;
+    mm = utc ? dayjs.utc : dayjs;
 
   if (typeof value === 'string') {
     value = value.trim();
@@ -62,8 +68,8 @@ export const filterDate = (
         );
 
     return m[2] === '-'
-      ? from.subtract(step, timeUnitMap[m[4]] as moment.DurationInputArg2)
-      : from.add(step, timeUnitMap[m[4]] as moment.DurationInputArg2);
+      ? from.subtract(step, timeUnitMap[m[4]] as dayjs.DurationInputArg2)
+      : from.add(step, timeUnitMap[m[4]] as dayjs.DurationInputArg2);
     //   return from[m[2] === '-' ? 'subtract' : 'add'](step, mapping[m[4]] || m[4]);
   } else if (value === 'now') {
     return mm();
@@ -76,16 +82,16 @@ export const filterDate = (
   }
 };
 
-export function parseDuration(str: string): moment.Duration | undefined {
+export function parseDuration(str: string): Duration | undefined {
   const matches =
     /^((?:\-|\+)?(?:\d*\.)?\d+)(minute|min|hour|day|week|month|quarter|year|weekday|second|millisecond)s?$/.exec(
       str
     );
 
   if (matches) {
-    const duration = moment.duration(parseFloat(matches[1]), matches[2] as any);
+    const duration = dayjs.duration(parseFloat(matches[1]), matches[2] as any);
 
-    if (moment.isDuration(duration)) {
+    if (dayjs.isDuration(duration)) {
       return duration;
     }
   }
@@ -104,7 +110,7 @@ export function normalizeDate(value: any, format?: string) {
     return undefined;
   }
 
-  const v = moment(value, format, true);
+  const v = dayjs(value, format, true);
   if (v.isValid()) {
     return v;
   }
@@ -120,7 +126,7 @@ export function normalizeDate(value: any, format?: string) {
 
     while (formats.length) {
       const format = formats.shift()!;
-      const date = moment(value, format);
+      const date = dayjs(value, format);
 
       if (date.isValid()) {
         return date;

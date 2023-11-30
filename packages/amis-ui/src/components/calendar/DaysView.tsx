@@ -13,7 +13,7 @@ import {
   LocaleProps,
   localeable,
   ClassNamesFn,
-  convertArrayValueToMoment
+  convertArrayValueToDayjs
 } from 'amis-core';
 import type {RendererEnv} from 'amis-core';
 import Picker from '../Picker';
@@ -795,7 +795,7 @@ export class CustomDaysView extends React.Component<CustomDaysViewProps> {
       const currentDate = (selectedDate || viewDate || moment()).clone();
 
       // 只需计算year 、month
-      const selectDate = convertArrayValueToMoment(
+      const selectDate = convertArrayValueToDayjs(
         value,
         ['year', 'month'],
         currentDate

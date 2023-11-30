@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {isObservable, isObservableArray} from 'mobx';
 import uniq from 'lodash/uniq';
 import last from 'lodash/last';
@@ -2010,11 +2010,11 @@ export function JSONValueMap(
     : json;
 }
 
-export function convertArrayValueToMoment(
+export function convertArrayValueToDayjs(
   value: number[],
   types: string[],
-  mom: moment.Moment
-): moment.Moment {
+  mom: dayjs.Dayjs
+): dayjs.Dayjs {
   if (value.length === 0) return mom;
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
